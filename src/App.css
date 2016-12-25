@@ -1,0 +1,14 @@
+.App {
+  text-align: left;
+}
+
+.profile-unknown {
+}
+
+.profile-booster {
+  background-color: #FF0000
+}
+
+.profile-not-booster {
+  background-color: #10a310
+}
