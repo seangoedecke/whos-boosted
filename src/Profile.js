@@ -34,7 +34,8 @@ class Profile extends Component {
     const analysis = {
       totalWrDifference: 0,
       unrankedOnly: false,
-      boostedOnServer: 0
+      boostedOnServer: 0,
+      europeServer: false
     }
     const analysisText = []
 
@@ -61,6 +62,33 @@ class Profile extends Component {
     const maxBoostedOnServer = Math.min.apply(Math, boostedOnServer)
     analysis.boostedOnServer = maxBoostedOnServer
 
+    // check for games on servers a long way apart
+    const servers = winrate.map( (server) => {
+      return server.server
+    })
+    if (servers.indexOf("EUROPE") !== -1) {
+      if ((servers.indexOf("AUSTRALIA") !== -1) ||
+        (servers.indexOf("US WEST") !== -1)) {
+          // very fishy! But let's check if the European winrate is higher before we pass judgement
+          const _europeWinrate = winrate.map( (server) => {
+            if (server.server === 'EUROPE' && server.stats.ranked.winrate) {
+              return server.stats.ranked.winrate
+            }
+          })
+          const europeWinrate = _europeWinrate[0]
+          const _nonEuropeWinrate = winrate.map( (server) => {
+            if (server.server !== 'EUROPE' && server.stats.ranked.winrate) {
+              return server.stats.ranked.winrate
+            }
+          })
+          const nonEuropeWinrate = (_nonEuropeWinrate.reduce( (x,y) => ((x && y) ? x + y : 0)))/_nonEuropeWinrate.length
+
+          if (europeWinrate > nonEuropeWinrate) {
+            analysis.europeServer = true
+          }
+        }
+    }
+
     // get biggest total difference between wr on servers
     const total_stats = winrate.map( (server) => {
       return Number((server.stats.ranked.winrate + server.stats.unranked.winrate) / 2) // total ranked/unranked winrate
@@ -82,7 +110,6 @@ class Profile extends Component {
     let totalScore = 0
     if (analysis.totalWrDifference > 0.2) {
       totalScore = totalScore + 2
-
       analysisText.push('large winrate difference between servers (' + String(analysis.totalWrDifference).slice(0,4) +')')
     } else if (analysis.totalWrDifference > 0.1) {
       totalScore = totalScore + 1
@@ -93,6 +120,11 @@ class Profile extends Component {
       totalScore = totalScore + 1
 
       analysisText.push('played unranked on multiple servers but ranked on only one')
+    }
+
+    if (analysis.europeServer) {
+      totalScore = totalScore + 3
+      analysisText.push('high winrate on Europe server for a non-EU player')
     }
     totalScore = Number(totalScore) + Number(analysis.boostedOnServer)
 
