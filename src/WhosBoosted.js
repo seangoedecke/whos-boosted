@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Profile from './Profile';
-import { Spinner } from './utils';
 import './App.css';
 
 const FRIENDS_ENDPOINT = "https://sgoedecke.pythonanywhere.com/api/v1/friends/names?steamid=" // ?steamid=1234
@@ -73,7 +72,7 @@ class WhosBoosted extends Component {
           <button disabled={this.state.loading} className='search-button' onClick={this.searchFriendsWinrates.bind(this)}>
             { this.state.loading ? 'Searching...' : 'Search' }
           </button>
-          { this.state.errors && <div>{this.state.errors}</div> }
+          { this.state.errors && <div className='errors'>{this.state.errors}</div> }
         </div>
         <div className='profiles'>
           { Object.keys(this.state.friends).map( (playerId) => (
