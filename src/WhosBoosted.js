@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import Profile from './Profile';
+import { Spinner } from './utils';
 import './App.css';
 
-const FRIENDS_ENDPOINT = "http://sgoedecke.pythonanywhere.com/api/v1/friends/names?steamid=" // ?steamid=1234
-const WINRATES_ENDPOINT = "http://sgoedecke.pythonanywhere.com/api/v1/server_winrates?steamid=" // ?steamid=88713814
+const FRIENDS_ENDPOINT = "https://sgoedecke.pythonanywhere.com/api/v1/friends/names?steamid=" // ?steamid=1234
+const WINRATES_ENDPOINT = "https://sgoedecke.pythonanywhere.com/api/v1/server_winrates?steamid=" // ?steamid=88713814
 
 class WhosBoosted extends Component {
   constructor() {
@@ -41,11 +42,8 @@ class WhosBoosted extends Component {
     this.setState({loading: true})
 
     this.fetchFriends().then( (friends) => {
-      console.log("finished fetching friends", friends)
       Object.keys(friends).forEach( (friendId) => {
-        console.log("getting winrates for", friends[friendId].name)
         this.fetchWinrates(friendId).then((winrate) => {
-          console.log(winrate)
           const friends = this.state.friends
           friends[friendId].winrate = winrate
           this.setState({friends})
@@ -64,14 +62,20 @@ class WhosBoosted extends Component {
   }
   render() {
     return (
-      <div className="App">
+      <div>
+        <div className='header'>
+          <h1>Who's Boosted?</h1>
+          <em>Scan your Dota 2 friendslist to see who's buying MMR</em>
+        </div>
+
         <div>
-          <input onChange={this.setSteamId.bind(this)} />
-          <button disabled={this.state.loading} onClick={this.searchFriendsWinrates.bind(this)}>Search</button>
+          <input placeholder='Enter your SteamID here...' className='search-input' onChange={this.setSteamId.bind(this)} />
+          <button disabled={this.state.loading} className='search-button' onClick={this.searchFriendsWinrates.bind(this)}>
+            { this.state.loading ? 'Searching...' : 'Search' }
+          </button>
           { this.state.errors && <div>{this.state.errors}</div> }
         </div>
-        <div>
-          { this.state.loading && <div>LOADING...</div> }
+        <div className='profiles'>
           { Object.keys(this.state.friends).map( (playerId) => (
             <Profile key={playerId} player={this.state.friends[playerId]} />
           ))}
