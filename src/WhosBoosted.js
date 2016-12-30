@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import Profile from './Profile';
 import './App.css';
 
+// const FRIENDS_ENDPOINT = "https://murmuring-cove-44224.herokuapp.com/api/v1/friends/names?steamid=" // ?steamid=1234
+// const WINRATES_ENDPOINT = "https://murmuring-cove-44224.herokuapp.com/api/v1/server_winrates?steamid=" // ?steamid=88713814
 const FRIENDS_ENDPOINT = "https://sgoedecke.pythonanywhere.com/api/v1/friends/names?steamid=" // ?steamid=1234
-const WINRATES_ENDPOINT = "https://sgoedecke.pythonanywhere.com/api/v1/server_winrates?steamid=" // ?steamid=88713814
+const WINRATES_ENDPOINT_V1 = "https://sgoedecke.pythonanywhere.com/api/v1/server_winrates?steamid=" // ?steamid=1234
+const WINRATES_ENDPOINT = "https://sgoedecke.pythonanywhere.com/api/v2/server_winrates?steamid=" // ?steamid=1234
 
 class WhosBoosted extends Component {
   constructor() {
